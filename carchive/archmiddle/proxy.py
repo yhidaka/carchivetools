@@ -11,7 +11,10 @@ import weakref, time
 
 from zope.interface import implementer
 
-from xmlrpc.client import loads, dumps, Fault
+try:
+    from xmlrpc.client import loads, dumps, Fault
+except ImportError:
+    from xmlrpclib import loads, dumps, Fault
 
 from twisted.internet import defer, protocol
 from twisted.web.iweb import IBodyProducer
@@ -166,7 +169,7 @@ class XMLRPCProxy(Resource):
             for pv in PVs:
                 results[pv['name']] = pv
 
-        R = dumps((results.values(),), methodresponse=True)
+        R = dumps((list(results.values()),), methodresponse=True)
         req.write(R)
         req.finish()
 

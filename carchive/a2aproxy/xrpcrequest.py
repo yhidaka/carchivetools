@@ -9,7 +9,10 @@ _log = logging.getLogger(__name__)
 
 import time, datetime
 
-from xmlrpc.client import dumps, Fault, escape
+try:
+    from xmlrpc.client import dumps, Fault, escape
+except ImportError:
+    from xmlrpclib import dumps, Fault, escape
 
 import numpy
 

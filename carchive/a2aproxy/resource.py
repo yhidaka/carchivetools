@@ -7,7 +7,10 @@ Copyright 2015 Brookhaven Science Assoc.
 import logging
 _log = logging.getLogger(__name__)
 
-from xmlrpc.client import loads, dumps, Fault
+try:
+    from xmlrpc.client import loads, dumps, Fault
+except ImportError:
+    from xmlrpclib import loads, dumps, Fault
 
 from twisted.internet import defer
 from twisted.web.resource import Resource

@@ -13,7 +13,10 @@ from functools import reduce
 _log = logging.getLogger("carchive.classic")
 
 import time, math
-from xmlrpc.client import Fault
+try:
+    from xmlrpc.client import Fault
+except ImportError:
+    from xmlrpclib import Fault
 
 from fnmatch import fnmatch
 from collections import defaultdict
@@ -27,7 +30,6 @@ from twisted.internet.defer import FirstError
 
 # Use EOL hack
 from ..rpcmunge import NiceProxy as Proxy
-#from twisted.web.xmlrpc import Proxy
 
 from ..dtype import dbr_time
 from ..util import HandledError

@@ -9,11 +9,11 @@ _log = logging.getLogger("carchive.appl")
 
 import json, time, calendar, datetime, math, re
 
-from urllib.parse import urlencode
-
 try:
     from io import StringIO
+    from urllib.parse import urlencode
 except ImportError:
+    from urllib import urlencode
     from cStringIO import StringIO
 
 import numpy as np
@@ -279,10 +279,10 @@ class Appliance(object):
 
         if not breakDown:
             meta = makeTime(0), makeTime(time.time())
-            R = dict(map(lambda  pv:(pv,meta), R))
+            R = dict([(pv,meta) for pv in R])
         else:
             meta = makeTime(0), makeTime(time.time()), 'all'
-            R = dict(map(lambda  pv:(pv,[meta]), R))
+            R = dict([(pv,[meta]) for pv in R])
 
         defer.returnValue(R)
 

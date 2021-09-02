@@ -4,7 +4,7 @@ Copyright 2015 Brookhaven Science Assoc.
  as operator of Brookhaven National Lab.
 """
 
-from __future__ import print_function
+
 
 import sys
 
@@ -15,10 +15,11 @@ if sys.version_info<(2,7):
 
 try:
     from io import StringIO
+    from xmlrpc.client import loads, dumps, Fault
 except ImportError:
     from cStringIO import StringIO
+    from xmlrpclib import loads, dumps, Fault
 
-from xmlrpc.client import dumps, loads, Fault
 
 from twisted.web.xmlrpc import Proxy
 
