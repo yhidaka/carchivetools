@@ -11,7 +11,10 @@ import json, time, calendar, datetime, math, re
 
 from urllib import urlencode
 
-from cStringIO import StringIO
+try:
+    from io import StringIO
+except ImportError:
+    from cStringIO import StringIO
 
 import numpy as np
 

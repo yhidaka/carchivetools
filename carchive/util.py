@@ -7,7 +7,10 @@ import logging
 _log = logging.getLogger(__name__)
 
 import re, collections, time
-from cStringIO import StringIO
+try:
+    from io import StringIO
+except ImportError:
+    from cStringIO import StringIO
 
 from twisted.web.client import Agent
 from twisted.web.server import Site
