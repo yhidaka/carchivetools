@@ -24,7 +24,7 @@ def cmd(archive=None, opt=None, args=None, conf=None, breakDown=None, **kws):
 
     _log.debug('Found %d results',len(res))
 
-    chs=res.keys()
+    chs=list(res.keys())
     chs.sort()
     for c in chs:
         print(c)

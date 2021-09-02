@@ -9,10 +9,11 @@ PVER=0
 
 import re
 import logging
+from functools import reduce
 _log = logging.getLogger("carchive.classic")
 
 import time, math
-from xmlrpclib import Fault
+from xmlrpc.client import Fault
 
 from fnmatch import fnmatch
 from collections import defaultdict
@@ -132,19 +133,19 @@ class Archive(object):
         if not isinstance(pattern, (str,unicode)):
             return list(set(reduce(list.__add__, map(self.archives, pattern), [])))
         else:
-            return filter(lambda a:fnmatch(a, pattern), self.__archs.iterkeys())
+            return [a for a in iter(self.__archs.keys()) if fnmatch(a, pattern)]
 
     def lookupArchive(self, arch):
         return self.__rarchs[arch]
 
     def _archname2key(self, archs):
         if archs is None:
-            archs = self.__archs.values()
+            archs = list(self.__archs.values())
         else:
             for i,a in enumerate(archs):
                 try:
                     k = int(a)
-                    if k not in self.__archs.itervalues():
+                    if k not in iter(self.__archs.values()):
                         raise KeyError("Invalid Archive key '%d'"%k)
                     # do nothing
                     continue
@@ -213,7 +214,7 @@ class Archive(object):
                         F, L = makeTime(F), makeTime(L)
                     results[pv].append( (F, L, archs[i]) )
 
-            for R in results.itervalues():
+            for R in results.values():
                 R.sort()
 
         else:
@@ -233,7 +234,7 @@ class Archive(object):
                     if C[1] is None or L > C[1]:
                         C[1] = L
 
-            results = dict([(K,tuple(V)) for K,V in results.iteritems()])
+            results = dict([(K,tuple(V)) for K,V in results.items()])
 
         defer.returnValue(results)
 

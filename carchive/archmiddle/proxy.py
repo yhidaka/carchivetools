@@ -11,7 +11,7 @@ import weakref, time
 
 from zope.interface import implementer
 
-from xmlrpclib import loads, dumps, Fault
+from xmlrpc.client import loads, dumps, Fault
 
 from twisted.internet import defer, protocol
 from twisted.web.iweb import IBodyProducer
@@ -162,7 +162,7 @@ class XMLRPCProxy(Resource):
         results = {}
         names = yield self.info.lookup(sKs, pat)
 
-        for sK, PVs in names.iteritems():
+        for sK, PVs in names.items():
             for pv in PVs:
                 results[pv['name']] = pv
 

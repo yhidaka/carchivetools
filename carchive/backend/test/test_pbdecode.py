@@ -211,14 +211,14 @@ class TestDecodeScalar(TestCase):
 
         # all three decodes result in the same error, so only one message
         self.assertEqual(len(H.logs), 8)
-        self.assertRegexpMatches(H.logs[0], 'missing required fields:')
-        self.assertRegexpMatches(H.logs[1], 'protobuf decode fails:')
-        self.assertRegexpMatches(H.logs[2], 'missing required fields:')
-        self.assertRegexpMatches(H.logs[3], 'protobuf decode fails:')
-        self.assertRegexpMatches(H.logs[4], 'protobuf decode fails:')
-        self.assertRegexpMatches(H.logs[5], 'missing required fields:')
-        self.assertRegexpMatches(H.logs[6], 'protobuf decode fails:')
-        self.assertRegexpMatches(H.logs[7], 'protobuf decode fails:')
+        self.assertRegex(H.logs[0], 'missing required fields:')
+        self.assertRegex(H.logs[1], 'protobuf decode fails:')
+        self.assertRegex(H.logs[2], 'missing required fields:')
+        self.assertRegex(H.logs[3], 'protobuf decode fails:')
+        self.assertRegex(H.logs[4], 'protobuf decode fails:')
+        self.assertRegex(H.logs[5], 'missing required fields:')
+        self.assertRegex(H.logs[6], 'protobuf decode fails:')
+        self.assertRegex(H.logs[7], 'protobuf decode fails:')
 
     _dis_data = [
         # easy case, disconnect has different second
@@ -349,8 +349,8 @@ class TestSpecial(TestCase):
         assert_array_equal(M['severity'], [103])
 
         self.assertEqual(len(self.H.logs), 2)
-        self.assertRegexpMatches(self.H.logs[0], 'missing required fields: val')
-        self.assertRegexpMatches(self.H.logs[1], 'protobuf decode fails:')
+        self.assertRegex(self.H.logs[0], 'missing required fields: val')
+        self.assertRegex(self.H.logs[1], 'protobuf decode fails:')
 
         V, M = pbdecode.decoders[6](_data, 0)
         self.assertEqual(V[0,0], 30)
@@ -372,7 +372,7 @@ class TestSpecial(TestCase):
 
         # libprotobuf tells us nothing about the cause of the failure...
         self.assertEqual(len(self.H.logs), 1)
-        self.assertRegexpMatches(self.H.logs[0], 'protobuf decode fails:')
+        self.assertRegex(self.H.logs[0], 'protobuf decode fails:')
 
 if __name__=='__main__':
     import unittest

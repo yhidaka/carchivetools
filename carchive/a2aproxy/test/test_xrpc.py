@@ -18,7 +18,7 @@ try:
 except ImportError:
     from cStringIO import StringIO
 
-from xmlrpclib import dumps, loads, Fault
+from xmlrpc.client import dumps, loads, Fault
 
 from twisted.web.xmlrpc import Proxy
 
