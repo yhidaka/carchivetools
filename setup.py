@@ -91,6 +91,7 @@ class LinkScripts(Command):
         self.links = self.distribution.x_link_scripts or ()
     def run(self):
         from os.path import join
+        self.mkpath(self.install_dir)
         for target, dest in self.links:
             self.copy_file(target,
                            join(self.install_dir, dest),
