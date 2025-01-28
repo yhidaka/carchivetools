@@ -10,7 +10,7 @@ import subprocess as sp
 from distutils.core import setup, Distribution, Extension, Command, DistutilsSetupError
 from distutils.command import build, build_ext, install
 
-from numpy.distutils.misc_util import get_numpy_include_dirs
+import numpy as np
 
 if sys.version_info<(3,7):
     import warnings
@@ -50,8 +50,8 @@ class GenProtobuf(Command):
 
         from os.path import isfile
         if self.protoc and not isfile(self.protoc):
-            from distutils.spawn import find_executable
-            self.protoc = find_executable(self.protoc)
+            from shutil import which
+            self.protoc = which(self.protoc)
         if not self.protoc:
             raise DistutilsSetupError("Unable to find 'protoc'")
 
@@ -113,8 +113,8 @@ extra_ldflags=[]
 import platform
 if platform.system() == "Linux":
     extra_cflags.append('-Wno-write-strings')
-    if sp.call('which dpkg-buildflags', 
-                stdout=sp.PIPE, 
+    if sp.call('which dpkg-buildflags',
+                stdout=sp.PIPE,
                 shell=True)==0:
         try:
             extra_cflags+=sp.check_output('dpkg-buildflags --get CPPFLAGS', shell=True).decode().split()
@@ -167,9 +167,10 @@ Exports of data to Archiver Appliance and H5 are supported.
     ext_modules=[Extension('carchive.backend.pbdecode',
                            ['carchive/backend/pbdecode.cpp',
                             'carchive/backend/generated.cpp'],
-                           include_dirs=get_numpy_include_dirs() + [
-                               sys.exec_prefix + '/include'], # To be able to see "google/protobuf/port_def.inc"
+                           include_dirs=[np.get_include(),
+                            sys.exec_prefix + '/include'], # To be able to see "google/protobuf/port_def.inc"
                            libraries=['protobuf'],
+                           library_dirs=[os.path.join(sys.exec_prefix, "lib")],
                            extra_compile_args=extra_cflags,
                            extra_link_args=extra_ldflags,
                  )],

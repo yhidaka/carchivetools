@@ -1,7 +1,9 @@
 #define PY_SSIZE_T_CLEAN
+#define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 
 #include <Python.h>
 #include <numpy/arrayobject.h>
+#include "numpy/ndarraytypes.h"
 
 #include <string.h>
 #include <sstream>
@@ -396,8 +398,9 @@ PyObject* PBD_decode_X(PyObject *unused, PyObject *args)
 
     for(Py_ssize_t i=0, j=0; i<nlines; i++, j++) {
         const PB& D = decoders[i];
-        meta *M = (meta*)PyArray_GETPTR1(outmeta.get(), j);
-        char *val = (char*)PyArray_GETPTR2(outval.get(), j, 0);
+        PyArrayObject *outmeta_array = reinterpret_cast<PyArrayObject*>(outmeta.get());
+        meta *M = (meta*)PyArray_GETPTR1(outmeta_array, j);
+        char *val = (char*)PyArray_GETPTR2(reinterpret_cast<PyArrayObject*>(outval.get()), j, 0);
 
         if(cadismod==0 && extrasamp[i]) {
             bool havets = false;
@@ -422,7 +425,8 @@ PyObject* PBD_decode_X(PyObject *unused, PyObject *args)
                     unsigned int prevS=0, nextS = D.secondsintoyear(),
                                  prevNS=0, nextNS = D.nano();
                     if(j>0) {
-                        meta *prevM = (meta*)PyArray_GETPTR1(outmeta.get(), j-1);
+                        PyArrayObject *outmeta_array = reinterpret_cast<PyArrayObject*>(outmeta.get());
+                        meta *prevM = (meta*)PyArray_GETPTR1(outmeta_array, j-1);
                         prevS = prevM->sec;
                         prevNS= prevM->nano;
                     }
@@ -468,8 +472,9 @@ PyObject* PBD_decode_X(PyObject *unused, PyObject *args)
 
             // increment for the real sample
             j++;
-            M = (meta*)PyArray_GETPTR1(outmeta.get(), j);
-            val = (char*)PyArray_GETPTR2(outval.get(), j, 0);
+            PyArrayObject *outmeta_array = reinterpret_cast<PyArrayObject*>(outmeta.get());
+            M = (meta*)PyArray_GETPTR1(outmeta_array, j);
+            val = (char*)PyArray_GETPTR2(reinterpret_cast<PyArrayObject*>(outval.get()), j, 0);
         }
 
         vectop<E,PB,vect>::store(D, val);
@@ -729,7 +734,8 @@ initpbdecode(void)
     // create dtype for struct meta
     PyArray_Descr* tval = PyArray_DescrNewFromType(NPY_VOID);
     assert(tval);
-    tval->elsize = sizeof(meta);
+    // tval->elsize = sizeof(meta); // confirmed to work w/ numpy=1.26.4 (Python=3.12.8)
+    PyDataType_SET_ELSIZE(tval, sizeof(meta)); // confirmed to work w/ numpy=2.2.2 (Python=3.12.8)
     dtype_meta = tval;
     Py_INCREF(tval); // keep one extra ref for the C global variable
     PyModule_AddObject(mod, "metatype", (PyObject*)tval);
@@ -737,7 +743,8 @@ initpbdecode(void)
     // create dtype for char[40]
     tval = PyArray_DescrNewFromType(NPY_STRING);
     assert(tval);
-    tval->elsize = 40;
+    // tval->elsize = 40; // confirmed to work w/ numpy=1.26.4 (Python=3.12.8)
+    PyDataType_SET_ELSIZE(tval, 40); // confirmed to work w/ numpy=2.2.2 (Python=3.12.8)
     dtype_val_str = tval;
     Py_INCREF(tval);
     PyModule_AddObject(mod, "strtype", (PyObject*)tval);

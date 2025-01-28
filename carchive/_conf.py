@@ -4,15 +4,13 @@ Copyright 2015 Brookhaven Science Assoc.
  as operator of Brookhaven National Lab.
 """
 
-try:
-    from configparser import SafeConfigParser, NoOptionError, NoSectionError
-except ImportError:
-    from ConfigParser import SafeConfigParser, NoOptionError, NoSectionError
+from configparser import ConfigParser, NoOptionError, NoSectionError
+
 
 class ConfigDict(object):
     """dict-like wrapper around a ConfigParser
 
-    >>> P=SafeConfigParser()
+    >>> P=ConfigParser()
     >>> P.set('DEFAULT', 'foo', 'bar')
     >>> P.set('DEFAULT', 'baz', '5')
     >>> D=ConfigDict(P, 'DEFAULT')
@@ -37,7 +35,7 @@ class ConfigDict(object):
     def __init__(self, P, S='DEFAULT'):
         if isinstance(P, dict):
             D = P
-            P = SafeConfigParser()
+            P = ConfigParser()
             if S!='DEFAULT':
                 P.add_section(S)
             for K,V in D.items():
@@ -89,7 +87,7 @@ class ConfigDict(object):
             return self._P.getboolean(self._S, k)
         except (NoOptionError, NoSectionError):
             return d
-        
+
     def write(self, fd):
         self._P.write(fd)
 
@@ -110,7 +108,7 @@ def loadConfig(N):
           'defaultcount':'0',
           'maxquery':'30',
         }
-    cf=SafeConfigParser(defaults=dflt)
+    cf=ConfigParser(defaults=dflt)
     cf.read([
         '/etc/carchive.conf',
         os.path.expanduser('~/.carchiverc'),

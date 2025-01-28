@@ -5,3 +5,5 @@
 build
 _trial_temp
 dropin.cache
+dist
+carchivetools.egg-info
