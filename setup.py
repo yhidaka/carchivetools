@@ -6,11 +6,21 @@ Copyright 2015 Brookhaven Science Assoc.
 
 import sys
 import subprocess as sp
+from packaging.version import Version
 
 from distutils.core import setup, Distribution, Extension, Command, DistutilsSetupError
 from distutils.command import build, build_ext, install
 
 import numpy as np
+
+np_version = Version(np.__version__)
+use_np2 = np_version >= Version("2.0")
+
+pbdecode_src = (
+    "carchive/backend/pbdecode_np2.cpp"
+    if use_np2 else
+    "carchive/backend/pbdecode_np1.cpp"
+)
 
 if sys.version_info<(3,7):
     import warnings
@@ -165,7 +175,7 @@ Exports of data to Archiver Appliance and H5 are supported.
     py_modules = ['twisted.plugins.a2aproxy', 'twisted.plugins.archmiddle'],
     scripts = ['arget','arplothdf5'],
     ext_modules=[Extension('carchive.backend.pbdecode',
-                           ['carchive/backend/pbdecode.cpp',
+                           [pbdecode_src,
                             'carchive/backend/generated.cpp'],
                            include_dirs=[np.get_include(),
                             sys.exec_prefix + '/include'], # To be able to see "google/protobuf/port_def.inc"
